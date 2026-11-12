@@ -49,9 +49,20 @@ target_link_libraries(delay_core PUBLIC Threads::Threads)
 add_executable(delay-tests
     tests/test_main.cpp
     tests/test_framework.cpp
-    tests/engine_tests.cpp)
+    tests/engine_tests.cpp
+    tests/replay_model_tests.cpp)
 target_include_directories(delay-tests PRIVATE src tests)
 target_link_libraries(delay-tests PRIVATE delay_core)
+
+# Standalone automated acceptance entry for ring-buffer regression and the
+# independent replacement reference model, including fault-injection mutants.
+add_executable(ring-acceptance tests/ring_acceptance_main.cpp)
+target_include_directories(ring-acceptance PRIVATE src tests)
+target_link_libraries(ring-acceptance PRIVATE delay_core)
+
+enable_testing()
+add_test(NAME engine-suite COMMAND delay-tests)
+add_test(NAME ring-acceptance-suite COMMAND ring-acceptance)
 
 # Offline simulator / scenario renderer.
 add_executable(delay-sim tools/delay_sim.cpp)
